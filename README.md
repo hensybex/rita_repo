@@ -25,6 +25,12 @@
 Запусти на Windows-машине PowerShell **от имени администратора** и выполни:
 
 ```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process -Force
+```
+
+> Эта команда включает запуск локального скрипта только на текущую сессию PowerShell.
+
+```powershell
 Set-Location C:\tima\rita_repo
 .\scripts\install-node.ps1
 ```
