@@ -70,7 +70,7 @@ function Configure-AuthorizedKeys {
     }
 
     icacls "$sshDir" /inheritance:r | Out-Null
-    icacls "$sshDir" /grant "$UserName:(F)" | Out-Null
+    icacls "$sshDir" /grant "${UserName}:(F)" | Out-Null
     icacls "$sshDir" /grant "Administrators:(F)" | Out-Null
     icacls "$sshDir" /grant "SYSTEM:(F)" | Out-Null
 
@@ -88,7 +88,7 @@ function Configure-AuthorizedKeys {
     }
 
     icacls "$authFile" /inheritance:r | Out-Null
-    icacls "$authFile" /grant "$UserName:(F)" | Out-Null
+    icacls "$authFile" /grant "${UserName}:(F)" | Out-Null
     icacls "$authFile" /grant "Administrators:(F)" | Out-Null
     icacls "$authFile" /grant "SYSTEM:(F)" | Out-Null
 }
