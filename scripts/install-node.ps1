@@ -11,13 +11,13 @@ function Assert-Administrator {
     $principal = New-Object Security.Principal.WindowsPrincipal($currentIdentity)
 
     if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-        throw "Нужно запустить PowerShell от имени администратора."
+        throw "Run PowerShell as Administrator and execute the script again."
     }
 }
 
 function Ensure-Winget {
     if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-        throw "Команда winget не найдена. Установи App Installer из Microsoft Store и повтори запуск."
+        throw "winget is not available. Install App Installer from the Microsoft Store and retry."
     }
 }
 
@@ -48,7 +48,7 @@ function Install-Node {
         $arguments += "--force"
     }
 
-    Write-Host "Устанавливаю или обновляю Node.js LTS через winget..."
+    Write-Host "Installing or updating Node.js LTS via winget..."
     winget @arguments
 }
 
@@ -58,16 +58,16 @@ function Show-NodeVersion {
 
     if (Test-Path $nodeExecutable) {
         $nodeVersion = & $nodeExecutable -v
-        Write-Host "Node.js установлен: $nodeVersion"
+        Write-Host "Node.js: $nodeVersion"
     } else {
-        Write-Warning "Не удалось найти node.exe по пути $nodeExecutable. Открой новое окно PowerShell и проверь node -v."
+        Write-Warning "node.exe was not found at $nodeExecutable. Open a new PowerShell window and run node -v."
     }
 
     if (Test-Path $npmExecutable) {
         $npmVersion = & $npmExecutable -v
-        Write-Host "npm установлен: $npmVersion"
+        Write-Host "npm: $npmVersion"
     } else {
-        Write-Warning "Не удалось найти npm.cmd по пути $npmExecutable. Открой новое окно PowerShell и проверь npm -v."
+        Write-Warning "npm.cmd was not found at $npmExecutable. Open a new PowerShell window and run npm -v."
     }
 }
 
@@ -77,11 +77,11 @@ Ensure-Winget
 $currentNode = Get-NodeInfo
 
 if ($currentNode -and -not $Force) {
-    Write-Host "Node.js уже установлен ($($currentNode.Version)). Запусти скрипт с параметром -Force, если нужна переустановка."
+    Write-Host "Node.js is already installed ($($currentNode.Version)). Use -Force to reinstall."
     return
 }
 
 Install-Node
 
 Show-NodeVersion
-Write-Host "Готово. Можно запускать npm install -g @google/gemini-cli."
+Write-Host "Done. You can now run npm install -g @google/gemini-cli."
