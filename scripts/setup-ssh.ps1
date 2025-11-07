@@ -58,7 +58,11 @@ function Configure-AuthorizedKeys {
         return
     }
 
-    $userProfile = (Get-CimInstance Win32_UserProfile | Where-Object { $_.LocalPath -like "*\\$UserName" -and $_.Loaded }).LocalPath
+    $profiles = Get-CimInstance Win32_UserProfile | Where-Object { $_.LocalPath -like "*\\$UserName" -and $_.Loaded }
+    if ($profiles) {
+        $userProfile = $profiles[0].LocalPath
+    }
+
     if (-not $userProfile) {
         $userProfile = Join-Path $env:SystemDrive "Users"
         $userProfile = Join-Path $userProfile $UserName
