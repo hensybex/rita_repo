@@ -58,8 +58,8 @@ function Configure-AuthorizedKeys {
         return
     }
 
-    $profiles = Get-CimInstance Win32_UserProfile | Where-Object { $_.LocalPath -like "*\\$UserName" -and $_.Loaded }
-    if ($profiles) {
+    $profiles = Get-CimInstance Win32_UserProfile -ErrorAction SilentlyContinue | Where-Object { $_.LocalPath -like "*\\$UserName" }
+    if ($profiles -and $profiles[0].LocalPath) {
         $userProfile = $profiles[0].LocalPath
     }
 
@@ -69,7 +69,7 @@ function Configure-AuthorizedKeys {
     }
 
     if (-not (Test-Path $userProfile)) {
-        throw "User profile directory '$userProfile' was not found. Specify -Username explicitly if needed."
+        throw "User profile directory '$userProfile' was not found."
     }
 
     $sshDir = Join-Path $userProfile ".ssh"
