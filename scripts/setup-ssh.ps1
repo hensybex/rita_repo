@@ -58,9 +58,16 @@ function Configure-AuthorizedKeys {
         return
     }
 
-    $profiles = Get-CimInstance Win32_UserProfile -ErrorAction SilentlyContinue | Where-Object { $_.LocalPath -like "*\\$UserName" }
-    if ($profiles -and $profiles[0].LocalPath) {
-        $userProfile = $profiles[0].LocalPath
+    $userProfile = $null
+    if ($UserName -and $UserName -eq $env:USERNAME -and $env:USERPROFILE) {
+        $userProfile = $env:USERPROFILE
+    }
+
+    if (-not $userProfile) {
+        $profiles = Get-CimInstance Win32_UserProfile -ErrorAction SilentlyContinue | Where-Object { $_.LocalPath -like "*\\$UserName" }
+        if ($profiles -and $profiles[0].LocalPath) {
+            $userProfile = $profiles[0].LocalPath
+        }
     }
 
     if (-not $userProfile) {
