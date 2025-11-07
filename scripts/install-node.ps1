@@ -11,13 +11,13 @@ function Assert-Administrator {
     $principal = New-Object Security.Principal.WindowsPrincipal($currentIdentity)
 
     if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-        throw "Запусти PowerShell от имени администратора и повтори запуск скрипта."
+        throw "Нужно запустить PowerShell от имени администратора."
     }
 }
 
 function Ensure-Winget {
     if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-        throw "Утилита winget не найдена. Установи 'App Installer' из Microsoft Store и запусти скрипт ещё раз."
+        throw "Команда winget не найдена. Установи App Installer из Microsoft Store и повтори запуск."
     }
 }
 
@@ -48,20 +48,26 @@ function Install-Node {
         $arguments += "--force"
     }
 
-    Write-Host "⏳ Устанавливаю/обновляю Node.js LTS через winget..."
-    winget @arguments | Write-Host
+    Write-Host "Устанавливаю или обновляю Node.js LTS через winget..."
+    winget @arguments
 }
 
 function Show-NodeVersion {
     $nodeExecutable = "$env:ProgramFiles\nodejs\node.exe"
+    $npmExecutable = "$env:ProgramFiles\nodejs\npm.cmd"
 
     if (Test-Path $nodeExecutable) {
         $nodeVersion = & $nodeExecutable -v
-        $npmVersion = & "$env:ProgramFiles\nodejs\npm.cmd" -v
-        Write-Host "✅ Node.js установлен: $nodeVersion"
-        Write-Host "✅ npm установлен: $npmVersion"
+        Write-Host "Node.js установлен: $nodeVersion"
     } else {
-        Write-Warning "Node.js установлен, но текущая сессия PowerShell ещё не видит новую версию. Открой новое окно и выполни 'node -v' и 'npm -v'."
+        Write-Warning "Не удалось найти node.exe по пути $nodeExecutable. Открой новое окно PowerShell и проверь node -v."
+    }
+
+    if (Test-Path $npmExecutable) {
+        $npmVersion = & $npmExecutable -v
+        Write-Host "npm установлен: $npmVersion"
+    } else {
+        Write-Warning "Не удалось найти npm.cmd по пути $npmExecutable. Открой новое окно PowerShell и проверь npm -v."
     }
 }
 
@@ -71,10 +77,11 @@ Ensure-Winget
 $currentNode = Get-NodeInfo
 
 if ($currentNode -and -not $Force) {
-    Write-Host "ℹ️ Node.js уже установлен ($($currentNode.Version)). Для переустановки запусти скрипт с параметром -Force."
+    Write-Host "Node.js уже установлен ($($currentNode.Version)). Запусти скрипт с параметром -Force, если нужна переустановка."
     return
 }
 
 Install-Node
+
 Show-NodeVersion
-Write-Host "🚀 Готово. Теперь можно запускать 'npm install -g @google/gemini-cli'."
+Write-Host "Готово. Можно запускать npm install -g @google/gemini-cli."
