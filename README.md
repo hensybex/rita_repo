@@ -21,6 +21,18 @@
    git status
    ```
 
+## Скрипт установки Node.js
+Запусти на Windows-машине PowerShell **от имени администратора** и выполни:
+
+```powershell
+Set-Location C:\tima\rita_repo
+.\scripts\install-node.ps1
+```
+
+- Если появится сообщение, что Node.js уже установлен, но тебе нужна переустановка, добавь параметр `-Force`.
+- Скрипт требует установленного `winget` (ставится вместе с приложением **App Installer** из Microsoft Store).
+- После успешного выполнения появятся версии `node` и `npm`.
+
 ## Gemini CLI (коротко)
 1. Проверка Node.js и npm:
    ```powershell
