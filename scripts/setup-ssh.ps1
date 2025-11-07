@@ -68,6 +68,10 @@ function Configure-AuthorizedKeys {
         $userProfile = Join-Path $userProfile $UserName
     }
 
+    if (-not (Test-Path $userProfile)) {
+        throw "User profile directory '$userProfile' was not found. Specify -Username explicitly if needed."
+    }
+
     $sshDir = Join-Path $userProfile ".ssh"
     if (-not (Test-Path $sshDir)) {
         New-Item -ItemType Directory -Path $sshDir -Force | Out-Null
